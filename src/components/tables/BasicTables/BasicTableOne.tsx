@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState ,useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -8,6 +8,7 @@ import {
 } from "../../ui/table";
 
 import Badge from "../../ui/badge/Badge";
+import axios from 'axios';
 
 interface Order {
   id: number;
@@ -88,6 +89,18 @@ const initialTableData: Order[] = [
 
 export default function BasicTableOne() {
   const [tableData, setTableData] = useState<Order[]>(initialTableData);
+
+ useEffect(() => {
+    
+  const handleAllUser = async () =>{
+    
+
+  }
+
+  handleAllUser()
+   
+  }, [])
+  
 
   const handleDelete = (id: number) => {
     // Filter out the order with the given ID
