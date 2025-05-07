@@ -2,7 +2,6 @@ import { useState } from "react";
 import { EyeCloseIcon, EyeIcon } from "../../icons";
 import Label from "../form/Label";
 import Input from "../form/input/InputField";
-import Checkbox from "../form/input/Checkbox";
 import Button from "../ui/button/Button";
 
 export default function SignInForm() {
@@ -51,14 +50,7 @@ export default function SignInForm() {
                     </span>
                   </div>
                 </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <Checkbox checked={isChecked} onChange={setIsChecked} />
-                    <span className="block font-normal text-gray-700 text-theme-sm dark:text-gray-400">
-                      Keep me logged in
-                    </span>
-                  </div>
-                </div>
+               
                 <div>
                   <Button className="w-full" size="sm">
                     Sign in
@@ -71,7 +63,7 @@ export default function SignInForm() {
               <p className="text-sm font-semibold text-gray-700 dark:text-gray-400 tracking-wide">
                 Designed by{" "}
                 <span className="font-bold text-blue-600">
-                  Zeroit Solutions
+                  Zero It Solutions
                 </span>
               </p>
               <p className="text-sm text-center text-gray-700 dark:text-gray-400 mt-2">

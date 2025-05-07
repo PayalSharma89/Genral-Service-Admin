@@ -21,6 +21,7 @@ import Slider from "./pages/Slider";
 import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
+import ProtectedRoute from "./components/auth/Protected";
 
 export default function App() {
   return (
@@ -28,10 +29,15 @@ export default function App() {
       <Router>
         <ScrollToTop />
         <Routes>
+          {/* Auth Layout */}
+          <Route path="/" element={<SignIn />} />
+
           {/* Dashboard Layout */}
           <Route element={<AppLayout />}>
-            <Route index path="/" element={<Home />} />
-
+            <Route index path="/dashboard" element={
+              <ProtectedRoute>
+                <Home />
+              </ProtectedRoute> }/>       
             {/* Others Page */}
             <Route path="/profile" element={<UserProfiles />} />
             <Route path="/calendar" element={<Calendar />} />
@@ -60,9 +66,8 @@ export default function App() {
             <Route path="/bar-chart" element={<BarChart />} />
           </Route>
 
-          {/* Auth Layout */}
-          <Route path="/signin" element={<SignIn />} />
-          <Route path="/signup" element={<SignUp />} />
+          
+          {/* <Route path="/signup" element={<SignUp />} /> */}
         </Routes>
       </Router>
     </>
