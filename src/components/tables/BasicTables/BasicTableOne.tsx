@@ -7,7 +7,7 @@ import {
   TableRow,
 } from "../../ui/table";
 import Badge from "../../ui/badge/Badge";
-import axios from "axios";
+
 import { users } from "../../../utils/apis";
 
 interface Document {
@@ -73,24 +73,28 @@ export default function BasicTableOne() {
       try {
         const response = await users(); // assume response.data.payload is the user array
         const apiData = response.data.payload;
-       // console.log(apiData , "apiData");
-        
+        console.log(apiData, "apiData");
 
-        // Map API response to table format
         const formattedData: Order[] = apiData.map(
-          (user: any, index: number) => ({
-            id: index + 1,
-            user: {
-              image: "/images/user/default.jpg",
-              name: `${user.name} ${user.surname || ""}`,
-              role: user.userWorkProfile?.des || "",
-            },
-            Email: user.email,
-            phonenumber: user.phoneNumber || "N/A",
-            Date: user.profile === "COMPLETED" ? "Completed" : "Pending",
-            status: user.profile === "COMPLETED" ? "Provider" : "User",
-            userDocs: user.userDocs || [],
-          })
+          (user: any, index: number) => {
+            const imageUrl = user.profilePicture
+              ? `${user.profilePicture}`
+              : "https://via.placeholder.com/40"; // fallback image
+
+            return {
+              id: index + 1,
+              user: {
+                image: imageUrl,
+                name: `${user.name} ${user.surname || ""}`,
+                role: user.userWorkProfile?.des || "",
+              },
+              Email: user.email,
+              phonenumber: user.phoneNumber || "N/A",
+              Date: user.profile === "COMPLETED" ? "Completed" : "Pending",
+              status: user.profile === "COMPLETED" ? "Provider" : "User",
+              userDocs: user.userDocs || [],
+            };
+          }
         );
 
         setTableData(formattedData);
@@ -185,8 +189,9 @@ export default function BasicTableOne() {
                       <img
                         width={40}
                         height={40}
-                        src={order.user.image}
+                        src={`https://woqqy.juanosorio.dev/uploads/${order.user.image}`}
                         alt={order.user.name}
+                        crossOrigin="anonymous"
                       />
                     </div>
                     <div>
@@ -249,78 +254,77 @@ export default function BasicTableOne() {
 
       {/* Modal for viewing documents */}
       {isModalOpen && selectedUser && (
-  <div className="fixed inset-0 z-50 flex items-center justify-center  bg-opacity-50">
-    <div
-      className="bg-white p-6 rounded-lg w-1/2 max-w-md border-2"
-      style={{ borderColor: "#cccccc" }}
-    >
-      <h2 className="text-lg font-bold mb-4">
-        Documents for {selectedUser.user.name}
-      </h2>
+        <div className="fixed inset-0 z-50 flex items-center justify-center  bg-opacity-50">
+          <div
+            className="bg-white p-6 rounded-lg w-1/2 max-w-md border-2"
+            style={{ borderColor: "#cccccc" }}
+          >
+            <h2 className="text-lg font-bold mb-4">
+              Documents for {selectedUser.user.name}
+            </h2>
 
-      {selectedUser.userDocs && selectedUser.userDocs.length > 0 ? (
-        selectedUser.userDocs.map((doc) => (
-          <div key={doc.id} className="mb-4">
-            <div className="flex justify-between items-center">
-              <span>
-                {doc.name} ({doc.type})
-              </span>
-              <div>
-                <span
-                  className={`badge ${
-                    doc.status === "approved"
-                      ? "bg-green-500"
-                      : doc.status === "rejected"
-                      ? "bg-red-500"
-                      : "bg-yellow-500"
-                  } px-2 py-1 text-white`}
-                >
-                  {doc.status}
-                </span>
-              </div>
-            </div>
-            <div className="flex justify-between items-center mt-2">
-              <a
-                href={`https://woqqy.juanosorio.dev/uploads/${doc.file}`}
-                className="text-blue-600 hover:underline"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                View Document
-              </a>
-              {doc.status === "pending" && (
-                <div>
-                  <button
-                    className="bg-green-500 text-white px-4 py-2 rounded-lg mr-2"
-                    onClick={() => handleApproveDocument(doc.id)}
-                  >
-                    Approve
-                  </button>
-                  <button
-                    className="bg-red-500 text-white px-4 py-2 rounded-lg"
-                    onClick={() => handleRejectDocument(doc.id)}
-                  >
-                    Reject
-                  </button>
+            {selectedUser.userDocs && selectedUser.userDocs.length > 0 ? (
+              selectedUser.userDocs.map((doc) => (
+                <div key={doc.id} className="mb-4">
+                  <div className="flex justify-between items-center">
+                    <span>
+                      {doc.name} ({doc.type})
+                    </span>
+                    <div>
+                      <span
+                        className={`badge ${
+                          doc.status === "approved"
+                            ? "bg-green-500"
+                            : doc.status === "rejected"
+                            ? "bg-red-500"
+                            : "bg-yellow-500"
+                        } px-2 py-1 text-white`}
+                      >
+                        {doc.status}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-center mt-2">
+                    <a
+                      href={`https://woqqy.juanosorio.dev/uploads/${doc.file}`}
+                      className="text-blue-600 hover:underline"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      View Document
+                    </a>
+                    {doc.status === "pending" && (
+                      <div>
+                        <button
+                          className="bg-green-500 text-white px-4 py-2 rounded-lg mr-2"
+                          onClick={() => handleApproveDocument(doc.id)}
+                        >
+                          Approve
+                        </button>
+                        <button
+                          className="bg-red-500 text-white px-4 py-2 rounded-lg"
+                          onClick={() => handleRejectDocument(doc.id)}
+                        >
+                          Reject
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              )}
-            </div>
+              ))
+            ) : (
+              <p className="text-center text-gray-600">No documents found.</p>
+            )}
+
+            <button
+              onClick={handleCloseModal}
+              className="mt-4 bg-gray-500 text-white px-4 py-2 rounded-lg w-full"
+            >
+              Close
+            </button>
           </div>
-        ))
-      ) : (
-        <p className="text-center text-gray-600">No documents found.</p>
+        </div>
       )}
-
-      <button
-        onClick={handleCloseModal}
-        className="mt-4 bg-gray-500 text-white px-4 py-2 rounded-lg w-full"
-      >
-        Close
-      </button>
-    </div>
-  </div>
-)}
-
     </div>
   );
 }
