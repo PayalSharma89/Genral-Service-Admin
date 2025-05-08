@@ -6,7 +6,7 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const authToken = localStorage.getItem('authToken');
+  const authToken = localStorage.getItem('token');
 
   if (!authToken) {
     return <Navigate to="/" />;
@@ -17,12 +17,12 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     const currentTime = Math.floor(Date.now() / 1000);
 
     if (tokenPayload.exp < currentTime) {
-      localStorage.removeItem('authToken');
+      localStorage.removeItem('token');
       return <Navigate to="/" />;
     }
   } catch (error) {
     // Token is malformed or decoding failed
-    localStorage.removeItem('authToken');
+    localStorage.removeItem('token');
     return <Navigate to="/" />;
   }
 

@@ -3,10 +3,34 @@ import { EyeCloseIcon, EyeIcon } from "../../icons";
 import Label from "../form/Label";
 import Input from "../form/input/InputField";
 import Button from "../ui/button/Button";
-
+import axios from "axios";
+import { loginAdmin } from "../../utils/apis";
+import { useNavigate } from "react-router";
 export default function SignInForm() {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const HandleLogin = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    const data = {
+      email,
+      password,
+    };
+    console.log(data, "=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
+    try {
+       const response = await loginAdmin(data);
+    //  const response = await axios.post("https://woqqy.juanosorio.dev/auth/admin/login", data);
+      console.log("Response:", response.data);
+      localStorage.setItem('token',response.data.payload.token)
+      console.log("Navigating to dashboard...");
+      navigate('/dashboard');
+    } catch (error) {
+      console.log("Login failed:", error);
+    }
+  };
 
   return (
     <div className="flex flex-col flex-1">
@@ -27,7 +51,11 @@ export default function SignInForm() {
                   <Label>
                     Email <span className="text-error-500">*</span>{" "}
                   </Label>
-                  <Input placeholder="info@gmail.com" />
+                  <Input
+                    placeholder="info@gmail.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
                 </div>
                 <div>
                   <Label>
@@ -37,6 +65,8 @@ export default function SignInForm() {
                     <Input
                       type={showPassword ? "text" : "password"}
                       placeholder="Enter your password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
                     />
                     <span
                       onClick={() => setShowPassword(!showPassword)}
@@ -50,9 +80,17 @@ export default function SignInForm() {
                     </span>
                   </div>
                 </div>
-               
+
                 <div>
-                  <Button className="w-full" size="sm">
+                  {/* <button
+                    type="button"
+                    className="w-full"
+                    // size="sm"
+                    onClick={() => HandleLogin()}
+                  >
+                    Sign in
+                  </button> */}
+                  <Button className="w-full" size="sm" onClick={HandleLogin}>
                     Sign in
                   </Button>
                 </div>

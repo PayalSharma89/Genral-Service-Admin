@@ -35,10 +35,11 @@ export default function App() {
           {/* Dashboard Layout */}
           <Route element={<AppLayout />}>
             <Route index path="/dashboard" element={
+              // <Home />
               <ProtectedRoute>
                 <Home />
               </ProtectedRoute> }/>       
-            {/* Others Page */}
+            
             <Route path="/profile" element={<UserProfiles />} />
             <Route path="/calendar" element={<Calendar />} />
             <Route path="/blank" element={<Blank />} />
